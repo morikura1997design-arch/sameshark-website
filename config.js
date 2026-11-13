@@ -1,1 +1,1 @@
-window.FORMSPREE_ENDPOINT = ""; // Formspreeで発行されたフォームURLを設定してください
+window.FORMSPREE_ENDPOINT = "https://formspree.io/f/xyewkwnd";
