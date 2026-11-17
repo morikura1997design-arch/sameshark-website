@@ -38,18 +38,18 @@ function actionButtons(text){return `<div class="actions"><button type="button" 
    chunks.forEach((chunk,i)=>ctx.fillText(chunk,360,y+i*lh));
    return y+chunks.length*lh;
  }
- let y=325;
+ let y=300;
  // Pixelated logo in the upper part of the saved result image.
  if(logo.complete&&logo.naturalWidth){ctx.imageSmoothingEnabled=false;ctx.drawImage(logo,300,140,120,120);ctx.imageSmoothingEnabled=true;}
  // All sections advance from their measured height instead of using fixed positions.
- y=drawWrapped(title,y,isFort?46:35,'#c41e56',540,1.35)+35;
+ y=drawWrapped(title,y,isFort?46:35,'#c41e56',540,1.35)+26;
  for(let i=0;i<lines.length;i++){
-   let size=24;
+   let size=isFort?23:24;
    ctx.font='bold '+size+'px sans-serif';
    const count=Math.max(1,Math.ceil(ctx.measureText(lines[i]).width/525));
-   const remaining=890-y;
+   const remaining=935-y;
    if(remaining<(lines.length-i)*95+50)size=23;
-   y=drawWrapped(lines[i],y,size,'#004bbd',525,1.4)+27;
+   y=drawWrapped(lines[i],y,size,'#004bbd',525,1.36)+(isFort?19:27);
  }
  ctx.fillStyle='#666';ctx.font='22px sans-serif';
  ctx.fillText('SPACE サメシャーク',360,970);
@@ -58,6 +58,20 @@ function actionButtons(text){return `<div class="actions"><button type="button" 
  a.download=isFort?'サメみくじ.png':'サメサメネームメーカー.png';
  a.click();
 }$('nameform').onsubmit=e=>{e.preventDefault();const n=$('yourname').value.trim();if(!n)return;const title=pick(sharkNames)+pick(species)+n+pick(suffix),type=pick(types),skill=pick(skills),like=pick(likes),charm=pick(charms),quote=pick(quotes);lastName=`★ サメサメネームメーカー ★\n${title}\n${type}\nとくぎ：${skill}\nすきなもの：${like}\nチャームポイント：${charm}\n「${quote}」\nSPACE サメシャーク`;$('nameresult').hidden=false;$('nameresult').innerHTML=`<div class="result"><strong>★ あなたのサメプロフィール ★</strong><h3 class="cardtitle">${escapeHtml(title)}</h3><div class="stripe cardline">${type}</div><p class="cardline">【とくぎ】${skill}</p><p class="cardline">【すきなもの】${like}</p><p class="cardline">【チャームポイント】${charm}</p><p class="quote cardline">「${quote}」</p><p class="signature">SPACE サメシャーク</p></div>`+actionButtons();attachActions($('nameresult'),lastName)};
-const fortunes=[['にこにこ吉','今日は小さな幸せがいっぱい見つかる日！','いちごミルク'],['きらきら吉','あなたの笑顔が誰かの元気になるよ！','カラフルなペン'],['もぐもぐ吉','おいしいものとの出会いが待っているよ！','プリン'],['わくわく吉','新しいことを始めるのにぴったり！','お気に入りの靴'],['すやすや吉','のんびりした時間が幸せを運ぶよ！','ふわふわクッション'],['大吉','すてきなことがいっぱい起こりそう！','サメのキーホルダー']];$('draw').onclick=()=>{const [rank,word,item]=pick(fortunes);lastFortune=`★ サメみくじ ★\n${rank}\n${word}\nラッキーアイテム：${item}\nSPACE サメシャーク`;$('fortresult').hidden=false;$('fortresult').innerHTML=`<div class="result fortune-card"><div>本日のサメ運勢</div><div class="rank cardtitle">${rank}</div><p class="cardline" style="text-align:center;font-weight:bold">${word}</p><div class="lucky cardline">ラッキーアイテム：${item}</div><p class="signature">SPACE サメシャーク</p></div>`+actionButtons();attachActions($('fortresult'),lastFortune)};
+const fortuneRanks=['大吉','にこにこ吉','きらきら吉','もぐもぐ吉','わくわく吉','すやすや吉','ぽかぽか吉','るんるん吉','ふわふわ吉','なかよし吉','おひさま吉','ときめき吉'];
+const fortuneMessages=['小さなしあわせが次々見つかる日！','あなたの笑顔が誰かの元気になるよ！','おいしいものとの出会いが待っているよ！','新しいお気に入りが見つかりそう！','なんでもない時間が宝物になる日！','楽しいお誘いがやってくるかも！','今日は自分にごほうびをあげよう！','いつもの道で小さな発見がありそう！','好きなことに夢中になれる日！','誰かとのおしゃべりが楽しくなる日！','うれしい偶然に出会えそう！','今日はとびきりごきげんな一日！'];
+const fortuneItems=['いちごミルク','プリン','カラフルな靴下','小さなぬいぐるみ','クリームソーダ','お気に入りの本','シール','ドーナツ','ラムネ','お花のハンカチ','サメのキーホルダー','ふわふわクッション'];
+const fortuneSpots=['駅前の喫茶店','本屋さん','公園のベンチ','お菓子売り場','いつもの帰り道','窓際の席','小さな雑貨屋さん','海の見える場所','近所のパン屋さん','お気に入りのお部屋'];
+const fortuneQuotes=['きょうもいい波がきてるよ！','あなたのペースで泳ごうね！','うれしいこと、いっしょに探そう！','きょうも世界はきらきらしてるよ！','おやつの時間を大切にね！','すてきな一日になりますように！','ちいさな幸せも大発見だよ！','あなたの笑顔がだいすき！'];
+let previousFortuneKey='';
+$('draw').onclick=()=>{
+ let rank,word,item,spot,quote,key;
+ do{rank=pick(fortuneRanks);word=pick(fortuneMessages);item=pick(fortuneItems);spot=pick(fortuneSpots);quote=pick(fortuneQuotes);key=[rank,word,item,spot,quote].join('|')}while(key===previousFortuneKey);
+ previousFortuneKey=key;
+ lastFortune=`★ サメみくじ ★\n${rank}\n${word}\nラッキーアイテム：${item}\nラッキースポット：${spot}\n「${quote}」\nSPACE サメシャーク`;
+ $('fortresult').hidden=false;
+ $('fortresult').innerHTML=`<div class="result fortune-card"><div>本日のサメ運勢</div><div class="rank cardtitle">${rank}</div><p class="cardline" style="text-align:center;font-weight:bold">${word}</p><div class="lucky cardline">★ ラッキーアイテム ★<br>${item}</div><div class="lucky cardline" style="background:#e8f1ff;color:#004bbd;margin-top:12px">★ ラッキースポット ★<br>${spot}</div><p class="quote cardline">「${quote}」</p><p class="signature">SPACE サメシャーク</p></div>`+actionButtons();
+ attachActions($('fortresult'),lastFortune);
+};
 $('contactform').onsubmit=e=>{e.preventDefault();$('contactstatus').textContent='入力内容を確認しました。このプレビューでは送信されません。公開サイトではFormspreeから送信できます。'};
 </script></body></html>
